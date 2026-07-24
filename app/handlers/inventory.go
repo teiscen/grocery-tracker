@@ -1,9 +1,9 @@
 package handlers
 
-import(
+import (
 	"net/http"
-	"strconv"
 	"receiptTracker/services"
+	"strconv"
 )
 
 type InventoryHandler struct {
@@ -12,7 +12,7 @@ type InventoryHandler struct {
 
 func (h *InventoryHandler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("/api/inventory", func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method{
+		switch r.Method {
 		case http.MethodGet:
 			h.GetInventory(w, r)
 		case http.MethodPost:
@@ -23,10 +23,10 @@ func (h *InventoryHandler) Register(mux *http.ServeMux) {
 	})
 
 	mux.HandleFunc("/api/inventory/", func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method{
+		switch r.Method {
 		case http.MethodGet:
 			h.GetInventoryItem(w, r)
-		case http.MethodPost:
+		case http.MethodPut:
 			h.UpdateInventoryItem(w, r)
 		case http.MethodDelete:
 			h.DeleteInventoryItem(w, r)
@@ -68,7 +68,7 @@ func (h *InventoryHandler) GetInventory(w http.ResponseWriter, r *http.Request) 
 	items, err := h.Service.GetInventory(locationID)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "invalid locationId", err)
-		return 
+		return
 	}
 	writeJson(w, http.StatusOK, items)
 }

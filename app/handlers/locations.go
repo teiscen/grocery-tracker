@@ -35,6 +35,7 @@ func (h *LocationHandler) Register(mux *http.ServeMux) {
 			default:
 				http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 			}
+			return
 		}
 
 		switch r.Method {
@@ -55,6 +56,7 @@ func (h *LocationHandler) GetProductsByLocation(w http.ResponseWriter, r *http.R
 		writeError(w, http.StatusBadRequest,
 			"invalid location id", err,
 		)
+		return
 	}
 	locations, err := h.Service.GetProductsByLocation(id)
 	if err != nil {

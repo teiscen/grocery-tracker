@@ -1,0 +1,339 @@
+openapi: 3.0.3
+info:
+  title: Grocery Tracker API
+  version: 1.0.0
+  description: API contract for locations, products, and inventory.
+servers:
+  - url: http://localhost:8000
+paths:
+  /api/location:
+    get:
+      summary: List locations
+      responses:
+        '200':
+          description: Locations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Location'
+    post:
+      summary: Create location
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateLocationRequest'
+      responses:
+        '201':
+          description: Location created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+    delete:
+      summary: Delete all locations
+      responses:
+        '204':
+          description: Deleted
+
+  /api/location/{id}:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    get:
+      summary: Get location by ID
+      responses:
+        '200':
+          description: Location
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+    delete:
+      summary: Delete location by ID
+      responses:
+        '204':
+          description: Deleted
+
+  /api/location/{id}/products:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    get:
+      summary: List products present at a location
+      responses:
+        '200':
+          description: Products at location
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+
+  /api/product:
+    get:
+      summary: List products
+      parameters:
+        - in: query
+          name: barcode
+          schema:
+            type: string
+          description: Return a single matching product when present
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Case-insensitive product name search
+      responses:
+        '200':
+          description: Product list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found (barcode lookup)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundMessage'
+    post:
+      summary: Create product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductRequest'
+      responses:
+        '201':
+          description: Product created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+    delete:
+      summary: Delete all products
+      responses:
+        '204':
+          description: Deleted
+
+  /api/product/{id}:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    get:
+      summary: Get product by ID
+      responses:
+        '200':
+          description: Product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+    delete:
+      summary: Delete product by ID
+      responses:
+        '204':
+          description: Deleted
+
+  /api/inventory:
+    get:
+      summary: List inventory
+      parameters:
+        - in: query
+          name: locationId
+          schema:
+            type: integer
+          description: Optional location filter
+      responses:
+        '200':
+          description: Inventory list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryItem'
+    post:
+      summary: Create inventory item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInventoryRequest'
+      responses:
+        '201':
+          description: Inventory item created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryItem'
+
+  /api/inventory/{id}:
+    parameters:
+      - $ref: '#/components/parameters/IdPath'
+    get:
+      summary: Get inventory item by ID
+      responses:
+        '200':
+          description: Inventory item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryItem'
+    put:
+      summary: Update inventory item by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInventoryRequest'
+      responses:
+        '200':
+          description: Inventory item updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryItem'
+    delete:
+      summary: Delete inventory item by ID
+      responses:
+        '204':
+          description: Deleted
+
+components:
+  parameters:
+    IdPath:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+
+  schemas:
+    Location:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+
+    Product:
+      type: object
+      required: [id, name, category, barcode]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+        barcode:
+          type: string
+
+    InventoryItem:
+      type: object
+      required:
+        [id, productId, name, locationId, locationName, quantity, unit, opened, expiryStatus]
+      properties:
+        id:
+          type: integer
+        productId:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+          nullable: true
+        barcode:
+          type: string
+          nullable: true
+        locationId:
+          type: integer
+        locationName:
+          type: string
+        quantity:
+          type: number
+        unit:
+          type: string
+        expiryDate:
+          type: string
+          nullable: true
+          description: Date-only format (YYYY-MM-DD)
+        daysUntilExpiry:
+          type: integer
+          nullable: true
+        opened:
+          type: boolean
+        expiryStatus:
+          type: string
+          enum: [expired, expiring, ok]
+
+    CreateLocationRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+
+    CreateProductRequest:
+      type: object
+      required: [name, category, barcode]
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        barcode:
+          type: string
+
+    CreateInventoryRequest:
+      type: object
+      required: [productId, locationId, quantity, unit, opened]
+      properties:
+        productId:
+          type: integer
+        locationId:
+          type: integer
+        quantity:
+          type: number
+        unit:
+          type: string
+        expiryDate:
+          type: string
+          nullable: true
+          description: Date-only format (YYYY-MM-DD)
+        opened:
+          type: boolean
+
+    UpdateInventoryRequest:
+      type: object
+      required: [locationId, quantity, unit, opened]
+      properties:
+        locationId:
+          type: integer
+        quantity:
+          type: number
+        unit:
+          type: string
+        expiryDate:
+          type: string
+          nullable: true
+          description: Date-only format (YYYY-MM-DD)
+        opened:
+          type: boolean
+
+    NotFoundMessage:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string

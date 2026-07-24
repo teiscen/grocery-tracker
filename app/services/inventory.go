@@ -1,6 +1,6 @@
 package services
 
-import(
+import (
 	"receiptTracker/database"
 	"time"
 )
@@ -11,19 +11,19 @@ type InventoryServices struct {
 
 // computed fields (expiryStatus, daysUntilExpiry) are calculated before returning
 type InventoryItem struct {
-    ID             int     `json:"id"`
-    ProductID      int     `json:"productId"`
-    Name           string  `json:"name"`
-    Category       *string `json:"category,omitempty"`
-    Barcode        *string `json:"barcode,omitempty"`
-    LocationID     int     `json:"locationId"`
-    LocationName   string  `json:"locationName"`
-    Quantity       float64 `json:"quantity"`
-    Unit           string  `json:"unit"`
-    ExpiryDate     *string `json:"expiryDate,omitempty"`
-    DaysUntilExpiry *int   `json:"daysUntilExpiry,omitempty"`
-    Opened         bool    `json:"opened"`
-    ExpiryStatus   string  `json:"expiryStatus"`
+	ID              int     `json:"id"`
+	ProductID       int     `json:"productId"`
+	Name            string  `json:"name"`
+	Category        *string `json:"category,omitempty"`
+	Barcode         *string `json:"barcode,omitempty"`
+	LocationID      int     `json:"locationId"`
+	LocationName    string  `json:"locationName"`
+	Quantity        float64 `json:"quantity"`
+	Unit            string  `json:"unit"`
+	ExpiryDate      *string `json:"expiryDate,omitempty"`
+	DaysUntilExpiry *int    `json:"daysUntilExpiry,omitempty"`
+	Opened          bool    `json:"opened"`
+	ExpiryStatus    string  `json:"expiryStatus"`
 }
 
 // Defaults to ("ok", nil)
@@ -35,12 +35,12 @@ func computeExpiry(expiryDate *string) (string, *int) {
 	if err != nil {
 		return "ok", nil
 	}
-	
-	days := int(time.Until(t).Hours() / 24) 	
+
+	days := int(time.Until(t).Hours() / 24)
 	switch {
 	case days < 0:
 		return "expired", &days
-	case days <=3:
+	case days <= 3:
 		return "expiring", &days
 	default:
 		return "ok", &days
@@ -65,7 +65,7 @@ const baseInventoryQuery = `
 	JOIN locations l ON i.location_id = l.id`
 
 func (s *InventoryServices) GetInventory(locationID *int) ([]InventoryItem, error) {
-	query := baseInventoryQuery 
+	query := baseInventoryQuery
 
 	// Filter by location if its provided
 	args := make([]any, 0)
@@ -73,7 +73,7 @@ func (s *InventoryServices) GetInventory(locationID *int) ([]InventoryItem, erro
 		query += " WHERE l.id = $1"
 		args = append(args, *locationID)
 	}
-	
+
 	rows, err := s.DB.Query(query, args...)
 	if err != nil {
 		return nil, err
@@ -83,18 +83,18 @@ func (s *InventoryServices) GetInventory(locationID *int) ([]InventoryItem, erro
 	items := make([]InventoryItem, 0)
 	for rows.Next() {
 		var item InventoryItem
-		var expiryDate *string 
+		var expiryDate *string
 
 		if err := rows.Scan(
 			&item.ID,
-			&item.Quantity, 
+			&item.Quantity,
 			&item.Unit,
 			&item.Opened,
 			&expiryDate,
 			&item.ProductID,
-			&item.Name, 
-			&item.Category, 
-			&item.Barcode, 
+			&item.Name,
+			&item.Category,
+			&item.Barcode,
 			&item.LocationID,
 			&item.LocationName,
 		); err != nil {
@@ -115,14 +115,14 @@ func (s *InventoryServices) GetInventoryItem(id int) (*InventoryItem, error) {
 	query := baseInventoryQuery + " Where i.id = $1"
 	err := s.DB.QueryRow(query, id).Scan(
 		&item.ID,
-		&item.Quantity, 
+		&item.Quantity,
 		&item.Unit,
 		&item.Opened,
 		&expiryDate,
 		&item.ProductID,
-		&item.Name, 
-		&item.Category, 
-		&item.Barcode, 
+		&item.Name,
+		&item.Category,
+		&item.Barcode,
 		&item.LocationID,
 		&item.LocationName,
 	)
@@ -136,16 +136,16 @@ func (s *InventoryServices) GetInventoryItem(id int) (*InventoryItem, error) {
 }
 
 func (s *InventoryServices) CreateInventoryItem(
-    productID int,
-    locationID int,
-    quantity float64,
-    unit string,
-    expiryDate *string,
-    opened bool,
+	productID int,
+	locationID int,
+	quantity float64,
+	unit string,
+	expiryDate *string,
+	opened bool,
 ) (*InventoryItem, error) {
 	id, err := s.DB.InsertReturningID(`
-		INSERT INTO inventory (product_id, location_id, quantity, unit, expiry_date,
-		VALUES $1, $2, $3, $4, $5, $6) 
+		INSERT INTO inventory (product_id, location_id, quantity, unit, expiry_date, opened)
+		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING id`,
 		productID, locationID, quantity, unit, expiryDate, opened,
 	)
@@ -157,9 +157,9 @@ func (s *InventoryServices) CreateInventoryItem(
 
 func (s *InventoryServices) UpdateInventoryItem(
 	id int,
-	locationID int, 
+	locationID int,
 	quantity float64,
-	unit string, 
+	unit string,
 	expiryDate *string,
 	opened bool,
 ) (*InventoryItem, error) {
@@ -167,10 +167,10 @@ func (s *InventoryServices) UpdateInventoryItem(
 		UPDATE inventory
 		SET location_id = $1, quantity = $2, unit = $3, expiry_date = $4, opened = $5
 		WHERE id = $6`,
-		locationID, quantity, unit, expiryDate, opened, id, 
+		locationID, quantity, unit, expiryDate, opened, id,
 	)
 	if err != nil {
-		return nil, err	
+		return nil, err
 	}
 	return s.GetInventoryItem(id)
 }
@@ -178,22 +178,3 @@ func (s *InventoryServices) UpdateInventoryItem(
 func (s *InventoryServices) DeleteInventoryItem(id int) error {
 	return s.DB.DeleteByID("DELETE FROM inventory WHERE id = $1", id)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

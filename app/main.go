@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-
 	"receiptTracker/database"
 	"receiptTracker/handlers"
 	"receiptTracker/services"
@@ -26,7 +25,7 @@ func main() {
 	locationService := &services.LocationServices{
 		DB: db,
 	}
-	productService  := &services.ProductServices{
+	productService := &services.ProductServices{
 		DB: db,
 	}
 	inventoryService := &services.InventoryServices{
@@ -34,11 +33,11 @@ func main() {
 	}
 	// Initialize Handlers with resource pattern
 	mux := registerRoutes([]handlers.Registerable{
-		&handlers.LocationHandler{	Service: locationService},
-		&handlers.ProductHandler{	Service: productService},
-		&handlers.InventoryHandler{ Service: inventoryService},
+		&handlers.LocationHandler{Service: locationService},
+		&handlers.ProductHandler{Service: productService},
+		&handlers.InventoryHandler{Service: inventoryService},
 	})
 
 	fmt.Println("starting server on port 8000...")
-	http.ListenAndServe(":8000", mux)
+	http.ListenAndServe(":8000", handlers.LoggingMiddleware(mux))
 }

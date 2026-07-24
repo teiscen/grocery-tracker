@@ -8,7 +8,7 @@ CREATE TABLE locations (
 -- Represents a product ttype that exists in hte world (Dairyland Whole Milk 1L)
 -- Barcode is unique, two products cant share one 
 -- TODO: warn users that changes affect all instances of the profuct 
-CREATE TABLE product (
+CREATE TABLE products (
     id SERIAL PRIMARY KEY, 
     name VARCHAR(100) NOT NULL, 
     category VARCHAR(50), 
@@ -29,4 +29,3 @@ CREATE TABLE inventory (
     opened BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-

@@ -15,16 +15,17 @@ type Location struct {
 
 func (s *LocationServices) GetProductsByLocation(id int) ([]Product, error) {
 	rows, err := s.DB.Query(`
-		SELECT p.id, p.name, p.category, p.barcode 
+		SELECT DISTINCT p.id, p.name, p.category, p.barcode
 		FROM products p
+		JOIN inventory i ON i.product_id = p.id
 		WHERE i.location_id = $1`,
 		id,
 	)
 	if err != nil {
-		return nil, err 
+		return nil, err
 	}
 	defer rows.Close()
-	
+
 	products := make([]Product, 0)
 
 	for rows.Next() {
@@ -48,9 +49,11 @@ func (s *LocationServices) DeleteLocation(id int) error {
 
 func (s *LocationServices) GetLocations() ([]Location, error) {
 	// Cursor pointing to results (doesnt alloc mem)
-	// Effectively just a cursor, also a stream connection--whatever that means. 
+	// Effectively just a cursor, also a stream connection--whatever that means.
 	rows, err := s.DB.Query("SELECT id, name FROM locations")
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 	defer rows.Close()
 
 	// Creates and empty slice, if there are no locations it
@@ -72,9 +75,9 @@ func (s *LocationServices) GetLocation(id int) (*Location, error) {
 	err := s.DB.GetByID(
 		"SELECT id, name FROM locations WHERE id = $1",
 		id,
-		&loc.ID, &loc.Name, 
+		&loc.ID, &loc.Name,
 	)
-	if err != nil { 
+	if err != nil {
 		return nil, err
 	}
 	return &loc, nil
@@ -85,8 +88,8 @@ func (s *LocationServices) CreateLocation(name string) (*Location, error) {
 		"INSERT INTO locations (name) VALUES ($1) RETURNING id",
 		name,
 	)
-	if err != nil { 
-		return nil, err 
+	if err != nil {
+		return nil, err
 	}
 	return &Location{ID: id, Name: name}, nil
 }
@@ -97,4 +100,3 @@ func (s *LocationServices) CreateLocation(name string) (*Location, error) {
 //		-> LastInsertId
 // Query for multiple rows
 // QueryRow for a single row
-
