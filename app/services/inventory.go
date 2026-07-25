@@ -143,7 +143,8 @@ func (s *InventoryServices) CreateInventoryItem(
 	expiryDate *string,
 	opened bool,
 ) (*InventoryItem, error) {
-	id, err := s.DB.InsertReturningID(`
+	id, err := s.DB.InsertReturningID(
+		`
 		INSERT INTO inventory (product_id, location_id, quantity, unit, expiry_date, opened)
 		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING id`,
@@ -163,7 +164,8 @@ func (s *InventoryServices) UpdateInventoryItem(
 	expiryDate *string,
 	opened bool,
 ) (*InventoryItem, error) {
-	_, err := s.DB.Exec(`
+	_, err := s.DB.Exec(
+		`
 		UPDATE inventory
 		SET location_id = $1, quantity = $2, unit = $3, expiry_date = $4, opened = $5
 		WHERE id = $6`,

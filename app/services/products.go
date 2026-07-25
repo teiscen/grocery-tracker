@@ -93,13 +93,17 @@ func (s *ProductServices) SearchProducts(query string) ([]Product, error) {
 	return products, nil
 }
 
-// func (s *ProductServices) EditProducts(id int) () {
-// }
-
 func (s *ProductServices) CreateProduct(name string, category string, barcode string) (*Product, error) {
+	var barcodeArg any
+	if barcode != "" {
+		barcodeArg = barcode
+	} else {
+		barcodeArg = nil
+	}
+
 	id, err := s.DB.InsertReturningID(
 		"INSERT INTO products (name, category, barcode) VALUES ($1, $2, $3) RETURNING id",
-		name, category, barcode,
+		name, category, barcodeArg,
 	)
 	if err != nil {
 		return nil, err
