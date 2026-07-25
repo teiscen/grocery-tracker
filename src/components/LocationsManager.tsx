@@ -1,30 +1,45 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MOCK_LOCATIONS } from '../hooks/usePantryItems'
+import { createLocation, deleteLocation } from '../api/pantry'
+import { useLocations } from '../hooks/useLocations'
 import styles from './LocationsManager.module.css'
 
 export function LocationsManager() {
   const navigate = useNavigate()
-
-  // Copy MOCK_LOCATIONS into local state so we can mutate it
-  const [locations, setLocations] = useState(MOCK_LOCATIONS)
+  const { locations, isLoading, error, refetch } = useLocations()
   const [showAdd, setShowAdd] = useState(false)
   const [newName, setNewName] = useState('')
+  const [saveError, setSaveError] = useState<string | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
 
-  function handleDelete(id: number) {
-    setLocations(prev => prev.filter(l => l.id !== id))
-    // TODO: DELETE to Go API
+  async function handleDelete(id: number) {
+    try {
+      setSaveError(null)
+      await deleteLocation(id)
+      refetch()
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'Failed to delete location')
+    }
   }
 
-  function handleAdd() {
+  async function handleAdd() {
     if (!newName.trim()) return
-    // Generate a temporary id — Go API will assign the real one
-    const tempId = Math.max(...locations.map(l => l.id)) + 1
-    setLocations(prev => [...prev, { id: tempId, name: newName.trim() }])
-    // TODO: POST to Go API
-    setNewName('')
-    setShowAdd(false)
+    try {
+      setSaveError(null)
+      setIsSaving(true)
+      await createLocation(newName.trim())
+      refetch()
+      setNewName('')
+      setShowAdd(false)
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'Failed to create location')
+    } finally {
+      setIsSaving(false)
+    }
   }
+
+  if (isLoading) return <div className={styles.container}><p>Loading...</p></div>
+  if (error) return <div className={styles.container}><p>{error}</p></div>
 
   return (
     <div className={styles.container}>
@@ -41,7 +56,7 @@ export function LocationsManager() {
             className={`${styles.row} ${i === locations.length - 1 && !showAdd ? styles.rowLast : ''}`}
           >
             <p className={styles.locationName}>{location.name}</p>
-            <button className={styles.deleteBtn} onClick={() => handleDelete(location.id)}>
+            <button className={styles.deleteBtn} onClick={() => void handleDelete(location.id)}>
               ✕
             </button>
           </div>
@@ -54,14 +69,18 @@ export function LocationsManager() {
               type="text"
               placeholder="Location name"
               value={newName}
-              onChange={e => setNewName(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleAdd()}
+              onChange={(e) => setNewName(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && void handleAdd()}
               autoFocus
             />
-            <button className={styles.confirmBtn} onClick={handleAdd}>✓</button>
+            <button className={styles.confirmBtn} onClick={() => void handleAdd()} disabled={isSaving}>
+              {isSaving ? '…' : '✓'}
+            </button>
           </div>
         )}
       </div>
+
+      {saveError && <p>{saveError}</p>}
 
       <button className={styles.addBtn} onClick={() => setShowAdd(true)}>
         + Add location

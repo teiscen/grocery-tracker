@@ -1,67 +1,64 @@
 import { useNavigate, useParams } from 'react-router-dom'
-import { usePantryItems, type FilterType } from '../hooks/usePantryItems'
-import type { Location } from "../types/pantry"
+import { type FilterType, usePantryItems } from '../hooks/usePantryItems'
+import { useLocations } from '../hooks/useLocations'
 import styles from './LocationView.module.css'
 
-import { MOCK_LOCATIONS } from '../hooks/usePantryItems'
-
-
-
-
-
-
 export function LocationView() {
-    const { id } = useParams()
-    const navigate = useNavigate()
+  const { id } = useParams()
+  const navigate = useNavigate()
 
-    const locationId = id ? Number(id) : undefined
-    const location = MOCK_LOCATIONS.find((l) => l.id === locationId)
-    // const {items, filter, setFilter} = usePantryItems(locationId) 
-    const { items, filter, setFilter, category, setCategory, categories } = usePantryItems(locationId)
-   
-    return (
+  const locationId = id ? Number(id) : undefined
+  const { locations } = useLocations()
+  const { items, filter, setFilter, category, setCategory, categories, isLoading, error } = usePantryItems(locationId)
+  const location = locations.find((entry) => entry.id === locationId)
+  const filters: FilterType[] = ['all', 'expiring', 'low']
+
+  if (isLoading) return <div className={styles.container}><p>Loading...</p></div>
+  if (error) return <div className={styles.container}><p>{error}</p></div>
+
+  return (
     <div className={styles.container}>
       <div className={styles.header}>
         <button className={styles.iconBtn} onClick={() => navigate('/')}>←</button>
         <h1 className={styles.title}>{location?.name ?? 'All items'}</h1>
-          <button
-            className={styles.iconBtn}
-            onClick={() => navigate(`/add?locationId=${locationId}`)}
-          >
-            +
-          </button>
+        <button
+          className={styles.iconBtn}
+          onClick={() => navigate(locationId ? `/add?locationId=${locationId}` : '/add')}
+        >
+          +
+        </button>
       </div>
 
       <div className={styles.filterBar}>
-        {['all', 'expiring', 'low'].map(f => (
+        {filters.map((currentFilter) => (
           <button
-            key={f}
-            className={`${styles.filterBtn} ${filter === f ? styles.filterBtnActive : ''}`}
-            onClick={() => setFilter(f as FilterType)}
+            key={currentFilter}
+            className={`${styles.filterBtn} ${filter === currentFilter ? styles.filterBtnActive : ''}`}
+            onClick={() => setFilter(currentFilter)}
           >
-            {f}
+            {currentFilter}
           </button>
         ))}
       </div>
 
       {categories.length > 0 && (
-      <div className={styles.filterBar}>
+        <div className={styles.filterBar}>
           <button
-          className={`${styles.filterBtn} ${category === null ? styles.filterBtnActive : ''}`}
-          onClick={() => setCategory(null)}
+            className={`${styles.filterBtn} ${category === null ? styles.filterBtnActive : ''}`}
+            onClick={() => setCategory(null)}
           >
-          All
+            All
           </button>
-          {categories.map(c => (
-          <button
-              key={c}
-              className={`${styles.filterBtn} ${category === c ? styles.filterBtnActive : ''}`}
-              onClick={() => setCategory(c)}
-          >
-              {c}
-          </button>
+          {categories.map((currentCategory) => (
+            <button
+              key={currentCategory}
+              className={`${styles.filterBtn} ${category === currentCategory ? styles.filterBtnActive : ''}`}
+              onClick={() => setCategory(currentCategory)}
+            >
+              {currentCategory}
+            </button>
           ))}
-      </div>
+        </div>
       )}
 
       {items.length === 0 ? (
@@ -69,7 +66,7 @@ export function LocationView() {
           <p>No items here</p>
         </div>
       ) : (
-        items.map(item => (
+        items.map((item) => (
           <div key={item.id} className={styles.item} onClick={() => navigate(`/item/${item.id}`)}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p className={styles.itemName}>{item.name}</p>
@@ -80,7 +77,7 @@ export function LocationView() {
                 <span className={styles.badgeExpired}>Expired</span>
               )}
             </div>
-            <p className={styles.itemSub}>{item.quantity} {item.unit} — {item.locationName}</p>
+            <p className={styles.itemSub}>{item.quantity} {item.unit} - {item.locationName}</p>
           </div>
         ))
       )}

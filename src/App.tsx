@@ -5,6 +5,7 @@ import { LocationView } from './components/LocationView'
 import { ItemDetail } from './components/ItemDetail'
 import { ItemForm } from './components/ItemForm'
 import { LocationsManager } from './components/LocationsManager'
+import { ScanScreen } from './components/ScanScreen'
 
 export default function App() {
   const { theme, toggle } = useTheme()
@@ -18,6 +19,7 @@ export default function App() {
       <Route path="/item/:id" element={<ItemDetail />} />
       <Route path="/add" element={<ItemForm />} />
       <Route path="/item/:id/edit" element={<ItemForm />} />
+      <Route path="/scan" element={<ScanScreen />} />
     </Routes>
   )
 }

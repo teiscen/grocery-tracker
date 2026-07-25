@@ -7,13 +7,14 @@ import react from '@vitejs/plugin-react'
 // })
 
 export default defineConfig({
-  plugins: [react()],
-  server: {
-    proxy: {
-      '/api': {
-        target: 'http://10.0.0.196:8000',
-        changeOrigin: true
-      }
+    plugins: [react()],
+    server: {
+        proxy: {
+            '/api': {
+                target: 'http://10.0.0.195:8000',
+                // target: 'http://localhost:8000',
+                // changeOrigin: true
+            }
+        }
     }
-  }
 })
