@@ -1,0 +1,185 @@
+/* ── Page container ──────────────────────────────────────────────────────────
+   Same base layout as PantryView — centered, mobile width, themed bg       */
+.container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 1rem 1rem 5rem;
+  font-family: -apple-system, 'Helvetica Neue', sans-serif;
+  min-height: 100dvh;
+  background: var(--bg);
+}
+
+/* ── Header row ──────────────────────────────────────────────────────────────
+   Back button left, title in middle, edit button right                     */
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.headerText {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+/* ── Location label ──────────────────────────────────────────────────────────
+   Small uppercase label above the item name                                */
+.locationLabel {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin: 0 0 2px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Shared icon button ──────────────────────────────────────────────────────
+   Same circular button as PantryView header                                */
+.iconBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 0.5px solid var(--border);
+  background: var(--bg-card);
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+.iconBtn:active { background: var(--bg); }
+
+/* ── Stat grid ───────────────────────────────────────────────────────────────
+   2 column grid of key details — quantity, status, expiry, category        */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.statCard {
+  background: var(--bg-card);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.statLabel {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin: 0 0 4px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.statValue {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.statUnit {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+/* ── Actions ─────────────────────────────────────────────────────────────────
+   Two equal buttons side by side at the bottom                             */
+.actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.actionBtn {
+  padding: 13px;
+  border-radius: 12px;
+  border: 0.5px solid var(--border);
+  background: var(--bg-card);
+  font-size: 14px;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.actionBtn:active { background: var(--bg); }
+
+.bannerWarning {
+  background: #fff8e6;
+  color: #b45309;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 1.25rem;
+  font-size: 13px;
+}
+
+.bannerExpired {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 1.25rem;
+  font-size: 13px;
+}
+
+.section {
+  margin-bottom: 1.5rem;
+}
+
+.sectionLabel {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin: 0 0 8px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 0.5px solid var(--border);
+  cursor: pointer;
+}
+
+.rowLast {
+  border-bottom: none;
+}
+
+.rowPrimary {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0 0 2px;
+}
+
+.rowSub {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.chevron {
+  font-size: 20px;
+  color: var(--border);
+  line-height: 1;
+}

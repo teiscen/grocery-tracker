@@ -1,0 +1,178 @@
+/* ── Page container ──────────────────────────────────────────────────────────*/
+.container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 1rem 1rem 5rem;
+  font-family: -apple-system, 'Helvetica Neue', sans-serif;
+  min-height: 100dvh;
+  background: var(--bg);
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────────*/
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.iconBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 0.5px solid var(--border);
+  background: var(--bg-card);
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+.iconBtn:active { background: var(--bg); }
+
+.saveBtn {
+  padding: 7px 16px;
+  border-radius: 20px;
+  border: none;
+  background: var(--text-primary);
+  color: var(--bg);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.saveBtn:active { opacity: 0.8; }
+
+/* ── Sections ────────────────────────────────────────────────────────────────*/
+.section {
+  margin-bottom: 1.5rem;
+}
+
+.sectionLabel {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin: 0 0 8px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* ── Fields ──────────────────────────────────────────────────────────────────*/
+.field {
+  padding: 12px 16px;
+  border-bottom: 0.5px solid var(--border);
+}
+
+.fieldLast {
+  border-bottom: none;
+}
+
+.fieldLabel {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  color: var(--text-primary);
+  outline: none;
+  padding: 0;
+}
+
+.select {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  color: var(--text-primary);
+  outline: none;
+  padding: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+/* ── Quantity row ────────────────────────────────────────────────────────────*/
+.qtyRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.qtyInput {
+  width: 60px;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  color: var(--text-primary);
+  outline: none;
+  padding: 0;
+}
+
+/* ── Toggle row ──────────────────────────────────────────────────────────────*/
+.toggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toggle {
+  width: 44px;
+  height: 26px;
+  border-radius: 13px;
+  border: none;
+  background: var(--border);
+  padding: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.toggleOn {
+  background: var(--text-primary);
+}
+
+.toggleThumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  transition: transform 0.2s;
+  display: block;
+}
+
+.toggleOn .toggleThumb {
+  transform: translateX(18px);
+}
+
+/* ── New location input ──────────────────────────────────────────────────────*/
+.newLocationField {
+  padding: 12px 16px;
+  border-top: 0.5px solid var(--border);
+  background: var(--bg-card);
+  border-radius: 0 0 12px 12px;
+}
+
+.errorMsg {
+  font-size: 12px;
+  color: #b91c1c;
+  margin: 4px 0 0;
+}
