@@ -22,4 +22,4 @@ export default function App() {
       <Route path="/scan" element={<ScanScreen />} />
     </Routes>
   )
-}
+}// trigger check
