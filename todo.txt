@@ -1,0 +1,17 @@
+Things to add:
+    Consolidate similar items
+
+Endpoints:
+    locations:
+         : all products in a location
+    products:
+
+Testing:
+    database:
+        db
+    handlers:
+        locations
+        products
+    services:
+        locations
+        products
