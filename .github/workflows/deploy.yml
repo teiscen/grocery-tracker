@@ -1,0 +1,14 @@
+on:
+  push:
+    branches: [main, dev]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Pull latest and redeploy
+        run: |
+          cd ~/grocery-tracker
+          git fetch origin ${{ github.ref_name }}
+          git reset --hard origin/${{ github.ref_name }}
+          docker compose up -d --build
